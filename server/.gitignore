@@ -1,0 +1,22 @@
+# Logs
+
+
+# Environment variables (NEVER commit these!)
+.env
+.env.local
+.env.development
+.env.development.local
+.env.test
+.env.test.local
+.env.production
+.env.production.local
+.env.staging
+.env.*.local
+
+# Keep .env.example for reference
+!.env.example
+
+# Local files
+*.local
+
+# Editor directories and files
