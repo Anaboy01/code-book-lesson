@@ -1,15 +1,17 @@
-import { Header } from './Components/Layout/Header.jsx'
-import { AllRoutes } from './Routes/AllRoutes.jsx'
+import { Header } from './Components/Layout/Header'
+import { Footer } from './Components/Layout/Footer'
+import { AllRoutes } from './Routes/AllRoutes'
 
-const App = () => {
+export default function App() {
   return (
-    <div className="App dark:bg-dark min-h-screen bg-slate-50 text-slate-900">
+    <div className="App dark:bg-dark flex min-h-screen flex-col bg-slate-50 text-slate-900">
       <Header />
-      <main className="px-4 py-8">
-        <AllRoutes />
+      <main className="flex-grow px-4 py-8">
+        <div className="mx-auto max-w-6xl">
+          <AllRoutes />
+        </div>
       </main>
+      <Footer />
     </div>
   )
 }
-
-export default App

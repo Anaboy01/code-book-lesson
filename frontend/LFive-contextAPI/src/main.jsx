@@ -1,16 +1,18 @@
-import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { BrowserRouter } from 'react-router-dom'
+import { ToastContainer } from 'react-toastify'
 import './index.css'
 import App from './App.jsx'
-import { CartProvider } from './context/CartContext.jsx'
+import { CartProvider } from './context/CartContext'
+import { FilterProvider } from './context/FilterContext'
 
 createRoot(document.getElementById('root')).render(
-  <StrictMode>
-    <BrowserRouter>
-      <CartProvider>
+  <BrowserRouter>
+    <CartProvider>
+      <FilterProvider>
         <App />
-      </CartProvider>
-    </BrowserRouter>
-  </StrictMode>,
+        <ToastContainer position="bottom-right" />
+      </FilterProvider>
+    </CartProvider>
+  </BrowserRouter>,
 )

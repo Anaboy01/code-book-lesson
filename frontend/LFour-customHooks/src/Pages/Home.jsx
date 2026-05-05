@@ -1,25 +1,28 @@
-import { useProducts } from '../hooks/useProducts.js'
-import { Hero } from '../Components/Sections/Hero.jsx'
-import { ProductCard } from '../Components/Elements/ProductCard.jsx'
-import { Link } from 'react-router-dom'
+import { useTitle } from '../Hooks/useTitle'
+import { ProductCard } from '../Components/Elements/ProductCard'
+import { products } from '../data/products'
 
-export const Home = () => {
-  const { products, loading } = useProducts()
+export function Home() {
+  useTitle('Home - Browse Courses')
 
   return (
     <section className="mx-auto max-w-6xl">
-      <Hero />
-      {loading ? (
-        <div>Loading products...</div>
-      ) : (
+      <div className="mb-8 rounded-3xl bg-gradient-to-r from-slate-950 to-slate-800 p-8 text-white shadow-xl shadow-slate-400/10">
+        <h2 className="text-4xl font-semibold">Lesson 4: Custom Hooks</h2>
+        <p className="mt-3 max-w-2xl text-slate-200">
+          Now we use the useTitle hook to set the browser title for each page.
+          Check the browser tab title!
+        </p>
+      </div>
+
+      <div className="mb-12">
+        <h3 className="mb-4 text-2xl font-semibold">Featured Courses</h3>
         <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
           {products.map((product) => (
-            <Link key={product.id} to={`/products/${product.id}`}>
-              <ProductCard product={product} />
-            </Link>
+            <ProductCard key={product.id} product={product} />
           ))}
         </div>
-      )}
+      </div>
     </section>
   )
 }

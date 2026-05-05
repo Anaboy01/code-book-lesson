@@ -1,7 +1,7 @@
-import { Header } from './Components/Layout/Header.jsx'
-import { Home } from './Pages/Home.jsx'
+import { Header } from './Components/Layout/Header'
+import { Home } from './Pages/Home'
 
-const App = () => {
+export default function App() {
   return (
     <div className="App dark:bg-dark min-h-screen bg-slate-50 text-slate-900">
       <Header />
@@ -11,5 +11,3 @@ const App = () => {
     </div>
   )
 }
-
-export default App

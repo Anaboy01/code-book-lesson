@@ -1,13 +1,13 @@
-import { ProductCard } from '../Components/Elements/ProductCard.jsx'
-import products from '../data/products.js'
+import { ProductCard } from '../Components/Elements/ProductCard'
+import { products } from '../data/products'
 
-export const Home = () => {
+export function Home() {
   return (
     <section className="mx-auto max-w-6xl">
-      <div className="mb-8 rounded-3xl bg-slate-950 p-8 text-white shadow-xl shadow-slate-400/10">
-        <h2 className="text-3xl font-semibold">Lesson 1: Project Structure</h2>
+      <div className="mb-8 rounded-3xl bg-gradient-to-r from-slate-950 to-slate-800 p-8 text-white shadow-xl shadow-slate-400/10">
+        <h2 className="text-4xl font-semibold">Lesson 1: Project Structure</h2>
         <p className="mt-3 max-w-2xl text-slate-200">
-          This lesson introduces the folder layout and the first working UI shell.
+          This lesson establishes the folder layout and the first working UI shell.
         </p>
       </div>
 

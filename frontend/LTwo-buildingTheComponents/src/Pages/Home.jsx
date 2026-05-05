@@ -1,22 +1,23 @@
-import { useEffect, useState } from 'react'
-import { Hero } from '../Components/Sections/Hero.jsx'
-import { ProductCard } from '../Components/Elements/ProductCard.jsx'
-import { rpc } from '../utils/rpc.js'
+import { ProductCard } from '../Components/Elements/ProductCard'
+import { products } from '../data/products'
 
-export const Home = () => {
-  const [products, setProducts] = useState([])
-
-  useEffect(() => {
-    rpc.getProducts().then(setProducts)
-  }, [])
-
+export function Home() {
   return (
     <section className="mx-auto max-w-6xl">
-      <Hero />
-      <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
-        {products.map((product) => (
-          <ProductCard key={product.id} product={product} />
-        ))}
+      <div className="mb-8 rounded-3xl bg-gradient-to-r from-slate-950 to-slate-800 p-8 text-white shadow-xl shadow-slate-400/10">
+        <h2 className="text-4xl font-semibold">Lesson 2: Building Components</h2>
+        <p className="mt-3 max-w-2xl text-slate-200">
+          Now we have more reusable components (Rating, Footer) and more pages (Login, Register, Cart).
+        </p>
+      </div>
+
+      <div className="mb-12">
+        <h3 className="mb-4 text-2xl font-semibold">Featured Courses</h3>
+        <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+          {products.map((product) => (
+            <ProductCard key={product.id} product={product} />
+          ))}
+        </div>
       </div>
     </section>
   )

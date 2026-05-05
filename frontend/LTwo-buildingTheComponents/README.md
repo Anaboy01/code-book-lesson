@@ -1,33 +1,55 @@
 # LTwo-buildingTheComponents
 
 ## Topic
-Building reusable React components and separating presentation from data.
+Building reusable React components and adding more pages.
 
-## What Changed From the Previous Lesson
-This lesson adds a component hierarchy, a hero section, and a shared footer while preserving the base project structure.
-
-### New Files
-- `src/utils/rpc.js` — JSON-RPC-style helper stub for loading products.
-- `src/Components/Sections/Hero.jsx` — landing section for the home page.
-- `src/Components/Layout/Footer.jsx` — footer layout component.
-
-### Modified Files
-- `src/App.jsx` — updated to include the footer.
-- `src/Pages/Home.jsx` — now loads product list from `src/utils/rpc.js`.
+## What Changed From Previous Lesson
+✅ Added **react-icons** for star ratings  
+✅ Created **Rating** component with star display  
+✅ Enhanced **ProductCard** to show ratings and reviews  
+✅ Added **Footer** component  
+✅ Created **Login** page with email/password form  
+✅ Created **Register** page with account creation form  
+✅ Created **Cart** page (static, empty state)  
+✅ Updated **App.jsx** to include Footer  
+✅ Expanded product data with ratings and review counts  
 
 ## Key Concepts Introduced
-- Component decomposition
-- Presentation and layout components
-- Data loading abstraction
+- Component composition (smaller pieces → larger UI)
+- Passing props to components
+- Reusable form patterns
+- Empty state messaging
+- Icon libraries (react-icons)
 
 ## Why These Changes Were Made
-Learners need to see how a flat app grows into reusable component pieces before routing is added.
+Instead of building one giant page, we break the UI into small, testable, reusable components:
+- **Rating**: Can be used on products, reviews, user profiles
+- **ProductCard**: Combines Header, Description, Price, Rating in one
+- **Login/Register/Cart**: Full pages now exist as components
+- **Footer**: Shared layout piece across all pages
+
+This pattern scales: future lessons will add routing to switch between these pages, then state to make them interactive.
+
+## What You Should See When You Run This
+✓ Header with CodeBook title  
+✓ Hero explaining Lesson 2  
+✓ **6 product cards** (doubled from Lesson 1) with:
+  - Title and description
+  - Price
+  - **5-star rating display** (new)
+  - Review count
+  - Hover effect on cards
+✓ Footer at the bottom  
+
+All static pages exist in the code—the Home page displays all 6 products as a gallery.
 
 ## How to Run
 ```bash
 npm install
-npm start
+npm run dev
 ```
 
-## Reference
-See `frontend/main-client/` for the full production version of this feature.
+Visit http://localhost:5173
+
+## Next Lesson
+In Lesson 3, we'll add **React Router** to switch between these pages dynamically without page reloads.

@@ -1,13 +1,15 @@
-import { Route, Routes } from 'react-router-dom'
-import { Home } from '../Pages/Home.jsx'
-import { ProductDetails } from '../Pages/ProductDetails.jsx'
-import { Cart } from '../Pages/Cart.jsx'
+import { Routes, Route } from 'react-router-dom'
+import { Home } from '../Pages/Home'
+import { Login } from '../Pages/Login'
+import { Register } from '../Pages/Register'
+import { Cart } from '../Pages/Cart'
 
-export const AllRoutes = () => {
+export function AllRoutes() {
   return (
     <Routes>
       <Route path="/" element={<Home />} />
-      <Route path="/products/:id" element={<ProductDetails />} />
+      <Route path="/login" element={<Login />} />
+      <Route path="/register" element={<Register />} />
       <Route path="/cart" element={<Cart />} />
     </Routes>
   )

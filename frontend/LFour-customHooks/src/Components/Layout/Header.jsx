@@ -1,17 +1,32 @@
 import { Link } from 'react-router-dom'
 
-export const Header = () => {
+export function Header() {
   return (
     <header className="mb-8 rounded-3xl bg-white p-6 shadow-sm shadow-slate-200">
-      <div className="mx-auto flex max-w-5xl items-center justify-between gap-4">
-        <div>
-          <h1 className="text-3xl font-semibold text-slate-900">Bookstore Hooks</h1>
-          <p className="mt-2 text-slate-600">Custom hooks keep data logic clean and reusable.</p>
+      <div className="mx-auto max-w-6xl">
+        <div className="flex items-center justify-between">
+          <div>
+            <Link to="/" className="text-3xl font-semibold text-slate-900 hover:text-slate-700">
+              CodeBook
+            </Link>
+            <p className="mt-2 text-slate-600">A React lesson series, lesson by lesson.</p>
+          </div>
+          
+          <nav className="flex gap-4">
+            <Link to="/" className="rounded-lg px-4 py-2 font-medium text-slate-700 hover:bg-slate-100">
+              Home
+            </Link>
+            <Link to="/login" className="rounded-lg px-4 py-2 font-medium text-slate-700 hover:bg-slate-100">
+              Login
+            </Link>
+            <Link to="/register" className="rounded-lg px-4 py-2 font-medium text-slate-700 hover:bg-slate-100">
+              Register
+            </Link>
+            <Link to="/cart" className="rounded-lg px-4 py-2 font-medium text-slate-700 hover:bg-slate-100">
+              Cart
+            </Link>
+          </nav>
         </div>
-        <nav className="flex items-center gap-4 text-slate-700">
-          <Link to="/" className="font-medium hover:text-slate-900">Home</Link>
-          <Link to="/cart" className="font-medium hover:text-slate-900">Cart</Link>
-        </nav>
       </div>
     </header>
   )

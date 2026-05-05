@@ -10,7 +10,8 @@
   },
   "dependencies": {
     "react": "^19.2.0",
-    "react-dom": "^19.2.0"
+    "react-dom": "^19.2.0",
+    "tailwindcss": "^4.1.17"
   },
   "devDependencies": {
     "@tailwindcss/vite": "^4.1.17",
@@ -22,7 +23,6 @@
     "eslint-plugin-react-hooks": "^5.2.0",
     "eslint-plugin-react-refresh": "^0.4.24",
     "globals": "^16.5.0",
-    "tailwindcss": "^4.1.17",
     "vite": "^7.2.2"
   }
 }
