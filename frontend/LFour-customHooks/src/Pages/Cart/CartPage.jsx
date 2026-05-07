@@ -1,6 +1,9 @@
 import { Link } from "react-router-dom";
+import { useTitle } from "../../Hooks/useTitle";
 
 const CartPage = () => {
+  useTitle("Shopping Cart - CodeBook");
+  
   // In this lesson, the cart is empty
   // Later lessons will add cart context and state management
   const cartItems = [];

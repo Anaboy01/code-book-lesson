@@ -1,72 +1,87 @@
-# Lesson 4: Custom Hooks
+# Lesson 6: Advanced Features
 
 ## Topic
-Creating reusable custom hooks to encapsulate component logic and state management patterns. Building `useTitle`, `useCart`, and `useFilter` hooks that can be used across multiple components.
+Building **admin functionality** with protected routes and product management. Implementing role-based access control and an admin dashboard where privileged users can create, edit, and delete products.
 
 ## Features Introduced in This Lesson
-- **useTitle Hook** — Sets the browser document title based on current page
-- **useCart Hook** — Encapsulates cart state and methods (add, remove, clear)
-- **useFilter Hook** — Encapsulates product filtering logic with sorting, stock filtering, rating filtering
-- **useMemo Hook** — Optimizes computed values to prevent unnecessary recalculations
-- **useCallback Hook** — Memoizes functions to prevent unnecessary re-renders
-- **Functional Composition** — Using hooks instead of class methods or component props
+- **AdminProtectedRoute Component** — Route protection based on admin status ✨ NEW
+- **AdminPage Component** — Full admin dashboard with tabbed interface ✨ NEW
+- **AdminProductForm** — Form for creating/editing products with validation ✨ NEW
+- **AdminProductList** — Table view of all products with edit/delete actions ✨ NEW
+- **Role-Based Access Control** — Admin-only routes using localStorage flags
+- **Demo Authentication** — Simple login that grants admin access for testing
+- **Toast Notifications** — User feedback on product operations
 
-## Features Carried Forward From Previous Lesson
-- All pages (Home, Products, Login, Register, Cart, ProductDetails)
-- React Router integration
-- Components (Header, Footer, ProductCard, Rating)
-- Tailwind CSS styling
+## Features Carried Forward From Previous Lessons
+- All Context API functionality
+- All custom hooks
+- All pages and components
+- Tailwind CSS styling with dark mode
+- React Router with protected routes
+- Cart and filter state management
 
 ## Features Still To Come
-- Context API for global state management
-- API integration with json-server
-- Admin panel and protected routes
-- User authentication service
-- Search functionality
-- Order management
+- Real authentication with password hashing
+- Persistent product database with json-server
+- Order management and user dashboard
+- Payment processing
+- User profile management
 
 ## What Changed From the Previous Lesson
 
 ### New Files Created
-- `src/Hooks/useTitle.js` — Custom hook for page title management ✨ NEW
-- `src/Hooks/useCart.js` — Custom hook for cart state ✨ NEW
-- `src/Hooks/useFilter.js` — Custom hook for product filtering ✨ NEW
+- `src/Routes/AdminProtectedRoute.jsx` — Route guard for admin pages ✨ NEW
+- `src/Pages/Admin/AdminPage.jsx` — Admin dashboard main page ✨ NEW
+- `src/Components/Admin/AdminProductForm.jsx` — Product form for CRUD operations ✨ NEW
+- `src/Components/Admin/AdminProductList.jsx` — Table of products with actions ✨ NEW
 
 ### Modified Files
-- `src/Pages/Home/HomePage.jsx` — Now uses useTitle hook
-- `src/Pages/Products/ProductList.jsx` — Now uses useFilter hook and displays filter controls
-- `src/Pages/ProductDetails.jsx` — Now uses useTitle hook
-- `src/Pages/Login.jsx` — Now uses useTitle hook
-- `src/Pages/Register.jsx` — Now uses useTitle hook
-- `src/Pages/Cart/CartPage.jsx` — Now uses useTitle hook
-- `package.json` — Updated project name to "code-book-lesson-4"
+- `src/Routes/AllRoutes.jsx` — Added /admin route with AdminProtectedRoute
+- `src/Pages/Login.jsx` — Now saves admin flag to localStorage on login
+- `package.json` — Updated project name to "code-book-lesson-6"
 
 ## Key Concepts Introduced
-- **Custom Hooks** — JavaScript functions that use React hooks to encapsulate logic
-- **Hook Composition** — Building complex hooks from simpler hooks
-- **Separation of Concerns** — Logic separated from component rendering
-- **Memoization** — Optimizing performance with useMemo and useCallback
-- **Reusability** — Same logic used across multiple components
-- **State Normalization** — Filtering and sorting logic extracted from components
+- **Protected Routes** — Restricting access based on authentication status
+- **Role-Based Access Control** — Different permissions for different users
+- **Admin Dashboard** — Centralized interface for site management
+- **CRUD Operations** — Create, Read, Update, Delete functionality
+- **Form Validation** — Client-side validation before submission
+- **Tab Navigation** — Organizing multiple views within a page
 
 ## Why These Changes Were Made
-Custom hooks are a **powerful pattern for reusing stateful logic** in React. By extracting cart management, filtering, and title management into hooks, we:
-1. Make components simpler and more focused on rendering
-2. Create reusable logic that can be shared across pages
-3. Make testing easier (hooks can be tested independently)
-4. Set the foundation for Context API integration in the next lesson
+Admin functionality is essential for a complete e-commerce platform because it:
+1. **Allows Content Management** — Admins can add/update/delete products
+2. **Establishes Security** — Protected routes prevent unauthorized access
+3. **Scales the Application** — Separates admin and user experiences
+4. **Prepares for Backend** — Structure ready for API integration in Lesson 7
+5. **Demonstrates Real-World Patterns** — Common in production applications
 
 ## What You Should See When You Run This
 When you run `npm install && npm run dev`:
-- **Page Titles** — Browser tab title changes based on current page (e.g., "Home - Access Latest Computer Science eBooks")
-- **Product Filtering** — Click the menu button on Products page to see filter controls:
-  - "In Stock Only" checkbox
-  - "Best Sellers Only" checkbox
-  - Sort dropdown (Price: Low to High / High to Low)
-  - Clear Filters button
-- **Filtered Results** — Product grid updates instantly when filters change
-- **No Product State Duplication** — Filtering logic is centralized in the hook, not scattered across components
-- **Performance Optimized** — Filters use memoization to avoid unnecessary recalculations
+
+### User Experience
+1. **Without Login**: 
+   - Visiting `/admin` redirects to `/login`
+   - Can browse products and add to cart normally
+
+2. **After Login**:
+   - Email saved to localStorage
+   - Admin flag set (in demo mode, all users are admins)
+   - New `/admin` route accessible
+
+3. **In Admin Dashboard**:
+   - Two tabs: "View Products" and "Add Product"
+   - Product list shows all items with edit/delete buttons
+   - Form validates required fields before submission
+   - Tab switching and form state management working
+   - Logout button clears authentication and returns to home
+
+4. **Product Management**:
+   - Add Product form captures: name, price, rating, image URL, descriptions, stock/bestseller flags
+   - Edit Product pre-fills form with existing data
+   - Delete confirms before removing
+   - Toast notifications confirm actions
+   - Demo mode shows feedback but doesn't persist to database
 
 ## How to Run
 ```bash
@@ -76,68 +91,190 @@ npm run dev
 
 The app will be available at `http://localhost:5173/`
 
-## Hook Usage Examples
+### Accessing Admin Features
+1. Click Login in the header
+2. Enter any email and password
+3. Get redirected to home with admin privileges
+4. Click browser address bar and go to `/admin`
+5. See the admin dashboard with product management
 
-### useTitle Hook
+## Admin Dashboard Architecture
+
+### AdminProtectedRoute
 ```javascript
-import { useTitle } from "../Hooks/useTitle";
-
-function HomePage() {
-  useTitle("Home - Buy Programming eBooks");
-  // Page title is now "Home - Buy Programming eBooks - CodeBook"
-}
+// Checks localStorage for adminUser flag
+const isAdmin = JSON.parse(localStorage.getItem("adminUser")) || false;
+// Returns children if admin, otherwise redirects to /login
+return isAdmin ? children : <Navigate to="/login" />;
 ```
 
-### useFilter Hook
+### AdminPage
 ```javascript
-import { useFilter } from "../Hooks/useFilter";
+// Provides tabbed interface:
+- View Products tab: Shows AdminProductList
+- Add/Edit Product tab: Shows AdminProductForm
+- Logout button: Clears auth and redirects
 
-function ProductList() {
-  const { 
-    productList,
-    setProductList,
-    filteredProducts,     // Already sorted/filtered
-    sortBy,
-    setSortBy,
-    clearFilters
-  } = useFilter();
-}
+// State:
+- activeTab: "products" | "add"
+- editingProduct: null | product object
 ```
 
-### useCart Hook
+### AdminProductForm
 ```javascript
-import { useCart } from "../Hooks/useCart";
-
-function ProductCard({ product }) {
-  const { addToCart, removeFromCart, cartList } = useCart();
-  // Use these methods to manage cart
-}
+// Handles both add and edit modes
+// Fields: name, price, rating, poster, overview, long_description, in_stock, best_seller
+// Validation: Required fields checked before submit
+// Callbacks: onSubmit with new product data
 ```
 
-## Reference
-See `frontend/main-client/` for the full production version of this project.
+### AdminProductList
+```javascript
+// Table display of products with columns:
+- Product Name
+- Price
+- Rating
+- In Stock (yes/no)
+- Best Seller (yes/no)
+- Actions (Edit/Delete buttons)
 
-## Hook Architecture
+// Events:
+- onEdit: Pass to form for editing
+- onDelete: Remove with confirmation
 ```
-LFour-customHooks/
+
+## Project Structure
+```
+LSix-advancedFeatures/
 ├── src/
-│   ├── Hooks/
-│   │   ├── useTitle.js ✨ NEW
-│   │   ├── useCart.js ✨ NEW
-│   │   └── useFilter.js ✨ NEW
+│   ├── Routes/
+│   │   ├── AdminProtectedRoute.jsx ✨ NEW
+│   │   └── AllRoutes.jsx (updated)
 │   ├── Pages/
-│   │   ├── Home/HomePage.jsx (uses useTitle)
-│   │   ├── Products/ProductList.jsx (uses useFilter)
-│   │   ├── ProductDetails.jsx (uses useTitle)
-│   │   ├── Login.jsx (uses useTitle)
-│   │   ├── Register.jsx (uses useTitle)
-│   │   └── Cart/CartPage.jsx (uses useTitle)
+│   │   ├── Admin/ ✨ NEW
+│   │   │   └── AdminPage.jsx ✨ NEW
+│   │   └── Login.jsx (updated)
+│   ├── Components/
+│   │   └── Admin/ ✨ NEW
+│   │       ├── AdminProductForm.jsx ✨ NEW
+│   │       └── AdminProductList.jsx ✨ NEW
+│   ├── context/
+│   │   ├── CartContext.jsx
+│   │   └── FilterContext.jsx
 │   └── ...
-└── ...
+└── package.json
+```
+
+## State Flow: Admin Operations
+
+### Adding a Product
+1. Click "Add Product" tab
+2. Fill in form fields
+3. Click "Add Product" button
+4. `handleAddProduct` validates and creates product
+5. Toast confirms action
+6. Form resets
+7. (In Lesson 7: Sent to API)
+
+### Editing a Product
+1. Click Edit icon on product row
+2. Tab switches to "Edit Product"
+3. Form pre-fills with product data
+4. Update fields as needed
+5. Click "Update Product"
+6. Changes applied
+7. (In Lesson 7: Sent to API)
+
+### Deleting a Product
+1. Click Delete icon on product row
+2. Confirmation dialog appears
+3. Confirm deletion
+4. Product removed from list
+5. Toast confirms action
+6. (In Lesson 7: Sent to API)
+
+## Form Validation
+```javascript
+// Before submission, checks:
+- Product name is not empty
+- Price is not empty
+- Image URL is not empty
+
+// Shows toast error if validation fails
+if (!formData.name || !formData.price || !formData.poster) {
+  toast.error("Please fill in all required fields");
+  return;
+}
+```
+
+## localStorage Structure
+```javascript
+// After login:
+localStorage.setItem("email", "user@example.com");
+localStorage.setItem("adminUser", true);
+
+// On logout:
+localStorage.removeItem("email");
+localStorage.removeItem("adminUser");
+```
+
+## Comparison: User vs Admin Views
+
+### User View
+```
+HomePage
+├── Browse products
+├── Filter/Sort
+└── Add to Cart
+
+ProductDetails
+├── View full details
+└── Add to Cart
+
+CartPage
+├── View cart items
+└── Checkout (future)
+```
+
+### Admin View (New!)
+```
+AdminPage
+├── AdminProductList (View/Edit/Delete)
+├── AdminProductForm (Create/Update)
+└── Logout
+```
+
+## How Login Works (Demo Mode)
+```javascript
+const handleSubmit = (e) => {
+  e.preventDefault();
+  // Save email
+  localStorage.setItem("email", email);
+  // Grant admin access (in Lesson 7: check against user roles)
+  localStorage.setItem("adminUser", true);
+  toast.success("Logged in successfully!");
+  navigate("/");
+};
 ```
 
 ## Next Steps
-In Lesson 5, we'll integrate these hooks with the **Context API** to share cart and filter state globally across all components. This will replace the local state in these hooks with context providers.
+In **Lesson 7: json-server Integration**, we'll:
+- Replace localStorage-based admin flag with real authentication
+- Connect product form to json-server POST/PUT/DELETE endpoints
+- Fetch products from API instead of hardcoded data
+- Implement real user authentication with backend validation
+- Add order management and user dashboard
+- Make all admin operations persist to database
+
+## Demo Limitations (Upgraded in Lesson 7)
+- ⚠️ Product changes don't persist (no database)
+- ⚠️ All logins are admin (no role differentiation)
+- ⚠️ No password validation
+- ⚠️ No user profile management
+- ⚠️ Product IDs are temporary (Date.now())
+
+## Reference
+See `frontend/main-client/` for the full production version of this project.
 
 ## Topic
 Implementing client-side routing with React Router v7 to enable multi-page navigation without page reloads. Building linked pages for browsing, viewing details, authentication forms, and shopping cart.

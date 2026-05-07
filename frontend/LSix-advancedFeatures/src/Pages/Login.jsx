@@ -1,17 +1,22 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useTitle } from "../Hooks/useTitle";
+import { toast } from "react-toastify";
 
 const Login = () => {
   useTitle("Login to CodeBook");
   
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const navigate = useNavigate();
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // In later lessons, this will call an authentication service
-    console.log("Login attempt:", { email, password });
+    // In Lesson 7, this will call authentication service
+    localStorage.setItem("email", email);
+    localStorage.setItem("adminUser", true); // Demo: all logins are admin
+    toast.success("Logged in successfully!");
+    navigate("/");
   };
 
   return (

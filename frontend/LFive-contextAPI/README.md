@@ -1,72 +1,82 @@
-# Lesson 4: Custom Hooks
+# Lesson 5: Context API
 
 ## Topic
-Creating reusable custom hooks to encapsulate component logic and state management patterns. Building `useTitle`, `useCart`, and `useFilter` hooks that can be used across multiple components.
+Using **React Context API** to manage global application state. Converting local component state into context providers that make state available across the entire app. Building `CartProvider` and `FilterProvider` to centralize cart management and product filtering.
 
 ## Features Introduced in This Lesson
-- **useTitle Hook** — Sets the browser document title based on current page
-- **useCart Hook** — Encapsulates cart state and methods (add, remove, clear)
-- **useFilter Hook** — Encapsulates product filtering logic with sorting, stock filtering, rating filtering
-- **useMemo Hook** — Optimizes computed values to prevent unnecessary recalculations
-- **useCallback Hook** — Memoizes functions to prevent unnecessary re-renders
-- **Functional Composition** — Using hooks instead of class methods or component props
+- **CartProvider & CartContext** — Global cart state with add, remove, and clear functionality ✨ NEW
+- **FilterProvider & FilterContext** — Global filter state for products ✨ NEW
+- **Context Providers** — Wrapping components to provide global state
+- **useCart Hook** — Accessing cart from context across components
+- **useFilter Hook** — Accessing filter state from context across components
+- **localStorage Integration** — Cart persists across page refreshes using Context + useEffect
+- **Toast Notifications** — User feedback when items are added/removed from cart
 
 ## Features Carried Forward From Previous Lesson
-- All pages (Home, Products, Login, Register, Cart, ProductDetails)
+- All custom hooks (useTitle, useCart, useFilter)
+- All pages and components
+- Tailwind CSS styling and dark mode
 - React Router integration
-- Components (Header, Footer, ProductCard, Rating)
-- Tailwind CSS styling
 
 ## Features Still To Come
-- Context API for global state management
-- API integration with json-server
-- Admin panel and protected routes
-- User authentication service
-- Search functionality
+- Admin panel with protected routes
+- Authentication service
+- API integration with json-server instead of hardcoded data
 - Order management
+- Advanced features (checkout, payment processing)
 
 ## What Changed From the Previous Lesson
 
 ### New Files Created
-- `src/Hooks/useTitle.js` — Custom hook for page title management ✨ NEW
-- `src/Hooks/useCart.js` — Custom hook for cart state ✨ NEW
-- `src/Hooks/useFilter.js` — Custom hook for product filtering ✨ NEW
+- `src/context/CartContext.jsx` — Context provider for cart state ✨ NEW
+- `src/context/FilterContext.jsx` — Context provider for filter state ✨ NEW
 
 ### Modified Files
-- `src/Pages/Home/HomePage.jsx` — Now uses useTitle hook
-- `src/Pages/Products/ProductList.jsx` — Now uses useFilter hook and displays filter controls
-- `src/Pages/ProductDetails.jsx` — Now uses useTitle hook
-- `src/Pages/Login.jsx` — Now uses useTitle hook
-- `src/Pages/Register.jsx` — Now uses useTitle hook
-- `src/Pages/Cart/CartPage.jsx` — Now uses useTitle hook
-- `package.json` — Updated project name to "code-book-lesson-4"
+- `src/context/index.js` — Now exports CartProvider/useCart and FilterProvider/useFilter
+- `src/main.jsx` — Now wraps app with CartProvider and FilterProvider
+- `src/Pages/Home/HomePage.jsx` — Now uses context-based filter
+- `src/Pages/Products/ProductList.jsx` — Now uses context-based filter
+- `src/Components/Elements/ProductCard.jsx` — Now uses context useCart hook, "Add to Cart" button is functional
+- `src/Components/Layout/Header.jsx` — Now displays real cart count from context
+- `src/Pages/Cart/CartPage.jsx` — Now displays cart items with remove functionality
+- `package.json` — Updated project name to "code-book-lesson-5"
 
 ## Key Concepts Introduced
-- **Custom Hooks** — JavaScript functions that use React hooks to encapsulate logic
-- **Hook Composition** — Building complex hooks from simpler hooks
-- **Separation of Concerns** — Logic separated from component rendering
-- **Memoization** — Optimizing performance with useMemo and useCallback
-- **Reusability** — Same logic used across multiple components
-- **State Normalization** — Filtering and sorting logic extracted from components
+- **Context API** — React's built-in solution for global state management
+- **Context Provider** — Component that provides state to all children
+- **useContext Hook** — Accessing context values in components
+- **useReducer Hook** — Managing complex state with reducer functions
+- **Persistent State** — Saving to localStorage and loading on app mount
+- **Global State vs Local State** — When to use Context vs useState
+- **Provider Architecture** — Nesting multiple providers for different concerns
 
 ## Why These Changes Were Made
-Custom hooks are a **powerful pattern for reusing stateful logic** in React. By extracting cart management, filtering, and title management into hooks, we:
-1. Make components simpler and more focused on rendering
-2. Create reusable logic that can be shared across pages
-3. Make testing easier (hooks can be tested independently)
-4. Set the foundation for Context API integration in the next lesson
+Moving to Context API allows us to:
+1. **Eliminate Prop Drilling** — No need to pass cart/filter through components that don't need it
+2. **Centralize State Logic** — Cart and filter state managed in one place
+3. **Make State Persistent** — Cart survives page refreshes
+4. **Prepare for Advanced Features** — Context makes it easy to add admin features, authentication, etc.
+5. **Improve Performance** — Only components that need state re-render when it changes
 
 ## What You Should See When You Run This
 When you run `npm install && npm run dev`:
-- **Page Titles** — Browser tab title changes based on current page (e.g., "Home - Access Latest Computer Science eBooks")
-- **Product Filtering** — Click the menu button on Products page to see filter controls:
-  - "In Stock Only" checkbox
-  - "Best Sellers Only" checkbox
-  - Sort dropdown (Price: Low to High / High to Low)
-  - Clear Filters button
-- **Filtered Results** — Product grid updates instantly when filters change
-- **No Product State Duplication** — Filtering logic is centralized in the hook, not scattered across components
-- **Performance Optimized** — Filters use memoization to avoid unnecessary recalculations
+
+### Working Features
+- **Add to Cart** — Click "Add to Cart" on any product, see toast notification and cart count increases in header
+- **Cart Badge** — Header shows cart count with number badge
+- **View Cart** — Go to /cart and see all items with images, names, prices
+- **Remove from Cart** — Delete button on each cart item removes it, toast confirms
+- **Clear Cart** — Button to clear all items at once
+- **Persistent Cart** — Reload the page, cart items remain (localStorage)
+- **Filter Products** — Still works from Lesson 4, now using context
+- **Dark Mode** — Toggle dark mode with settings icon, persists in localStorage
+
+### UI/UX Improvements
+- Toast notifications on add/remove/clear actions
+- Real cart count badge in header
+- Cart page displays actual items with images
+- Remove buttons use trash icon
+- Responsive design on mobile and desktop
 
 ## How to Run
 ```bash
@@ -76,68 +86,123 @@ npm run dev
 
 The app will be available at `http://localhost:5173/`
 
-## Hook Usage Examples
+## Context Architecture
 
-### useTitle Hook
+### CartContext
 ```javascript
-import { useTitle } from "../Hooks/useTitle";
+// Provides:
+{
+  cartList: [],           // Array of product objects in cart
+  total: 0,              // Sum of all prices
+  loading: false,        // Loading state for async operations
+  addToCart(product),    // Add product to cart
+  removeFromCart(id),    // Remove product by id
+  clearCart()            // Clear all items
+}
 
-function HomePage() {
-  useTitle("Home - Buy Programming eBooks");
-  // Page title is now "Home - Buy Programming eBooks - CodeBook"
+// Storage: Persists to localStorage as 'cart'
+```
+
+### FilterContext
+```javascript
+// Provides:
+{
+  productList: [],            // All products available
+  setProductList(products),   // Update product list
+  filteredProducts: [],       // Products after applying filters
+  sortBy: "",                 // Current sort option
+  setSortBy(sort),            // Change sort
+  onlyInStock: false,         // Filter by stock
+  setOnlyInStock(bool),       // Toggle stock filter
+  bestSellerOnly: false,      // Filter by bestseller
+  setBestSellerOnly(bool),    // Toggle bestseller filter
+  ratings: [],                // Filter by rating
+  setRatings(ratings),        // Set rating filters
+  clearFilters()              // Reset all filters
 }
 ```
 
-### useFilter Hook
-```javascript
-import { useFilter } from "../Hooks/useFilter";
-
-function ProductList() {
-  const { 
-    productList,
-    setProductList,
-    filteredProducts,     // Already sorted/filtered
-    sortBy,
-    setSortBy,
-    clearFilters
-  } = useFilter();
-}
+## State Management Flow
+```
+App (in main.jsx)
+├── CartProvider
+│   ├── Header (reads cartList for badge)
+│   ├── ProductCard (calls addToCart)
+│   ├── CartPage (reads cartList, total, calls remove/clear)
+│   └── ... all children can access useCart()
+│
+└── FilterProvider
+    ├── HomePage (calls setProductList)
+    ├── ProductList (reads filtered products, calls setSortBy etc)
+    └── ... all children can access useFilter()
 ```
 
-### useCart Hook
-```javascript
-import { useCart } from "../Hooks/useCart";
-
-function ProductCard({ product }) {
-  const { addToCart, removeFromCart, cartList } = useCart();
-  // Use these methods to manage cart
-}
+## Project Structure
 ```
-
-## Reference
-See `frontend/main-client/` for the full production version of this project.
-
-## Hook Architecture
-```
-LFour-customHooks/
+LFive-contextAPI/
 ├── src/
-│   ├── Hooks/
-│   │   ├── useTitle.js ✨ NEW
-│   │   ├── useCart.js ✨ NEW
-│   │   └── useFilter.js ✨ NEW
+│   ├── context/
+│   │   ├── CartContext.jsx ✨ NEW - Context + Provider + useCart hook
+│   │   ├── FilterContext.jsx ✨ NEW - Context + Provider + useFilter hook
+│   │   └── index.js (exports)
+│   ├── Components/
+│   │   ├── Layout/Header.jsx (uses useCart for badge)
+│   │   └── Elements/ProductCard.jsx (uses useCart for add)
 │   ├── Pages/
-│   │   ├── Home/HomePage.jsx (uses useTitle)
+│   │   ├── Home/HomePage.jsx (uses useFilter)
 │   │   ├── Products/ProductList.jsx (uses useFilter)
-│   │   ├── ProductDetails.jsx (uses useTitle)
-│   │   ├── Login.jsx (uses useTitle)
-│   │   ├── Register.jsx (uses useTitle)
-│   │   └── Cart/CartPage.jsx (uses useTitle)
+│   │   └── Cart/CartPage.jsx (uses useCart)
+│   ├── main.jsx (wrapped with providers)
 │   └── ...
-└── ...
+└── package.json
+```
+
+## How It Works: Adding Item to Cart
+
+1. User clicks "Add to Cart" on ProductCard
+2. `ProductCard` calls `addToCart(product)` from `useCart` hook
+3. `useCart` is accessing `CartContext`
+4. `CartContext` dispatch action to `cartReducer`
+5. `cartReducer` updates state with new item
+6. `CartContext.Provider` value changes
+7. All components reading `useCart` re-render with new data
+8. Header shows updated cart count
+9. Toast notification confirms action
+10. localStorage is updated with new cart
+
+## Comparison: Before vs After Context
+
+### Before (Lesson 4 - Local State)
+```javascript
+// Each component had its own cart state
+const [cartList, setCartList] = useState([]);
+// Props drilling if other components needed it
+<ProductCard product={product} onAddToCart={handleAdd} />
+```
+
+### After (Lesson 5 - Context)
+```javascript
+// One central CartContext
+const { cartList, addToCart } = useCart();
+// No props needed, available everywhere
+<ProductCard product={product} /> // Can use useCart internally
 ```
 
 ## Next Steps
-In Lesson 5, we'll integrate these hooks with the **Context API** to share cart and filter state globally across all components. This will replace the local state in these hooks with context providers.
+In **Lesson 6: Advanced Features**, we'll:
+- Add admin functionality to create new products
+- Implement protected routes for admin access
+- Add product management service
+- Build admin dashboard
+
+Then in **Lesson 7: json-server**, we'll:
+- Replace all hardcoded data with API calls to json-server
+- Implement authentication with real backend
+- Save orders and user data to database
+- Complete the full-stack experience
+
+## Reference
+See `frontend/main-client/` for the full production version of this project.
 
 ## Topic
 Implementing client-side routing with React Router v7 to enable multi-page navigation without page reloads. Building linked pages for browsing, viewing details, authentication forms, and shopping cart.
