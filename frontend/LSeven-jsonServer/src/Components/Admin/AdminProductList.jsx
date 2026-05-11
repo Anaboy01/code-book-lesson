@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { MdDelete, MdEdit } from "react-icons/md";
-import { useFilter } from "../../../context";
 import { toast } from "react-toastify";
+import { useFilter } from "../../context/FilterContext";
 
 const AdminProductList = ({ onEdit, onDelete }) => {
   const { productList, setProductList } = useFilter();

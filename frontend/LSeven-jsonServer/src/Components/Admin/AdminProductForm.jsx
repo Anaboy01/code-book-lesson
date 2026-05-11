@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { useTitle } from "../../../Hooks/useTitle";
 import { toast } from "react-toastify";
+import { useTitle } from "../../Hooks/useTitle";
 
 const AdminProductForm = ({ onSubmit, initialProduct = null }) => {
   useTitle("Add Product - Admin - CodeBook");

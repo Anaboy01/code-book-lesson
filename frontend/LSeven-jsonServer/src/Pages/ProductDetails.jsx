@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { Rating } from "./Components/Elements/Rating";
 import { useTitle } from "../Hooks/useTitle";
+import { Rating } from "../Components/Elements/Rating";
 
 const ProductDetails = () => {
   const { id } = useParams();
