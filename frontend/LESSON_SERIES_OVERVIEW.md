@@ -1,7 +1,7 @@
 # CodeBook React Lesson Series - Complete Overview
 
 ## Project Summary
-A **cumulative 7-lesson React course** that transforms students from zero to full-stack using modern React patterns. Each lesson is a complete, runnable project that adds new features progressively. By Lesson 7, students have built a fully functional e-book marketplace with frontend, backend integration, and admin functionality.
+A **cumulative 9-lesson React course** that transforms students from zero to full-stack using modern React patterns. Each lesson is a complete, runnable project that adds new features progressively. By Lesson 9, students have built a fully functional e-book marketplace with frontend, real backend integration, and admin functionality.
 
 ## Quick Start Guide
 
@@ -13,13 +13,26 @@ npm run dev
 ```
 App available at: `http://localhost:5173/`
 
-### Run Lesson 7 with json-server
+### Run Lesson 7 or 8 with json-server
 ```bash
 # Terminal 1: Start json-server
-cd frontend/LSeven-jsonServer
+cd frontend/LSeven-jsonServer   # or LEight-mainClientParity
 npx json-server --watch Data/db.json --port 3001
 
 # Terminal 2: Start React app
+npm install
+npm run dev
+```
+
+### Run Lesson 9 with Express Server
+```bash
+# Terminal 1: Start Express + MongoDB backend
+cd server
+npm install
+npm run dev
+
+# Terminal 2: Start React app
+cd frontend/LNine-serverIntegration
 npm install
 npm run dev
 ```
@@ -136,6 +149,31 @@ npm run dev
 
 ---
 
+### ✅ Lesson 8: main-client Feature Parity (json-server)
+**Focus**: Complete the UI and flows from the production `main-client` while keeping json-server  
+**Key Additions**:
+- Dashboard, order summary, checkout, and home page subcomponents
+- Search, filter bar, scroll-to-top, and dropdown navigation
+- Service layer updates for cart/order/auth parity with `main-client` contracts
+- json-server resources for users, carts, and orders
+
+**Student Outcome**: Can migrate a reference app to a mock API while preserving UI contracts
+
+---
+
+### ✅ Lesson 9: Real Server Integration (Express + MongoDB)
+**Focus**: Replace json-server with the production Express backend  
+**Key Changes**:
+- `api.js` — Express endpoints (`/api/users`, `/api/ebook`, `/api/cart`, `/api/order`)
+- JWT httpOnly cookie authentication (`credentials: 'include'`)
+- Protected cart, order, and admin routes
+- MongoDB persistence via `server/`
+- Same service layer and file structure pattern as Lesson 7
+
+**Student Outcome**: Can connect a React frontend to a real Node.js/Express API with authentication
+
+---
+
 ## Technology Stack
 
 ### Frontend
@@ -146,8 +184,9 @@ npm run dev
 - **React Icons 5.5.0** — Icon library
 - **React Toastify 11.0.5** — Toast notifications
 
-### Backend (Lesson 7+)
-- **json-server** — Mock REST API for data persistence
+### Backend
+- **json-server** — Mock REST API (Lessons 7–8)
+- **Express + MongoDB** — Production-style API (Lesson 9, `server/`)
 
 ### Development
 - **ESLint** — Code quality
@@ -165,14 +204,16 @@ L4: Local component state + custom hooks
   ↓
 L5: Global state with Context API
   ↓
-L6-7: Full-stack with backend persistence
+L6-8: Full-stack with json-server persistence
+  ↓
+L9: Full-stack with Express + MongoDB
 ```
 
 ### Data Flow Pattern
 ```
 Component → Custom Hook → Context (Global State) → Component
                               ↓
-                         json-server (L7)
+                         json-server (L7-8) or Express (L9)
 ```
 
 ### File Organization
@@ -192,17 +233,19 @@ src/
 
 ## Feature Matrix
 
-| Feature | L1 | L2 | L3 | L4 | L5 | L6 | L7 |
-|---------|----|----|----|----|----|----|-----|
-| UI Components | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| Routing | - | - | ✓ | ✓ | ✓ | ✓ | ✓ |
-| Dark Mode | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| Product Filtering | - | - | - | ✓ | ✓ | ✓ | ✓ |
-| Shopping Cart | - | - | - | ✓ | ✓ | ✓ | ✓ |
-| Authentication | - | - | ✓ | ✓ | ✓ | ✓ | ✓ |
-| Admin Panel | - | - | - | - | - | ✓ | ✓ |
-| Data Persistence | - | - | - | - | ✓ (local) | ✓ (local) | ✓ (server) |
-| API Integration | - | - | - | - | - | - | ✓ |
+| Feature | L1 | L2 | L3 | L4 | L5 | L6 | L7 | L8 | L9 |
+|---------|----|----|----|----|----|----|----|----|-----|
+| UI Components | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| Routing | - | - | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| Dark Mode | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| Product Filtering | - | - | - | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| Shopping Cart | - | - | - | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| Authentication | - | - | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| Admin Panel | - | - | - | - | - | ✓ | ✓ | ✓ | ✓ |
+| Dashboard/Orders | - | - | - | - | - | - | - | ✓ | ✓ |
+| Data Persistence | - | - | - | - | ✓ (local) | ✓ (local) | ✓ (json) | ✓ (json) | ✓ (MongoDB) |
+| API Integration | - | - | - | - | - | - | ✓ | ✓ | ✓ |
+| Real JWT Auth | - | - | - | - | - | - | - | - | ✓ |
 
 ---
 
@@ -254,6 +297,18 @@ src/
 - [ ] Understand RESTful principles
 - [ ] Build full-stack applications
 
+### Lesson 8
+- [ ] Achieve main-client feature parity
+- [ ] Preserve service contracts when swapping backends
+- [ ] Model users, carts, and orders in json-server
+
+### Lesson 9
+- [ ] Connect to Express + MongoDB backend
+- [ ] Use JWT httpOnly cookies for authentication
+- [ ] Configure Vite proxy for `/api` requests
+- [ ] Work with protected API routes
+- [ ] Migrate from mock API to production-style server
+
 ---
 
 ## Important Notes
@@ -261,8 +316,9 @@ src/
 ### Key Principle
 **"Each lesson is a complete, working application."** No regressions—everything from previous lessons works perfectly in subsequent lessons.
 
-### One Permanent Difference
-Throughout all lessons: **use json-server** (with `db.json`) instead of the original backend server. This simplifies setup while teaching full-stack concepts.
+### Backend Progression
+- **Lessons 7–8**: Use **json-server** (with `db.json`) to teach API concepts with zero backend setup.
+- **Lesson 9**: Switch to the **Express + MongoDB** server in `server/` for production-style auth and persistence.
 
 ### Fallback Data
 Each lesson includes fallback hardcoded data. If json-server isn't running (in L7), the app still works with sample data.
@@ -329,16 +385,17 @@ lsof -i :3001
 - L4: 90-120 min (hooks, filtering)
 - L5: 60-90 min (context API)
 - L6: 75-100 min (admin dashboard)
-- L7: 90-120 min (API integration)
+- L7: 90-120 min (json-server integration)
+- L8: 60-90 min (main-client parity)
+- L9: 90-120 min (Express server integration)
 
-**Total**: ~10-12 hours of structured, project-based React learning
+**Total**: ~12-15 hours of structured, project-based React learning
 
 ---
 
-## Next Steps After Lesson 7
+## Next Steps After Lesson 9
 
 Students can extend the project with:
-- Real authentication (JWT)
 - Payment processing (Stripe)
 - Email notifications
 - Image upload
