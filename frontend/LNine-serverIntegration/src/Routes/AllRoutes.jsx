@@ -25,9 +25,9 @@ export const AllRoutes = () => {
        <Route path="/dashboard" element={<Dashboardpage/>} />
        <Route path="/Order-Summary" element={<Order/>} />
        <Route path="/admin" element=
-       {<AdminProtectedRoute>
+       {
         <AdminPage/>
-       </AdminProtectedRoute>}/>
+      }/>
       </Routes>
     </>
   )

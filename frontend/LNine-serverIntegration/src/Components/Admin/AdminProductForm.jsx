@@ -1,22 +1,24 @@
 import React, { useState, useEffect } from 'react';
+import { toast } from 'react-toastify';
+import { useTitle } from '../../Hooks/useTitle';
 import adminService from '../../Services/adminService';
 
-const AdminProductForm = ({ product = null, onSuccess, onCancel }) => {
+const AdminProductForm = ({ product = null, onSuccess }) => {
+    useTitle(product ? "Edit Product - Admin - CodeBook" : "Add Product - Admin - CodeBook");
+
     const [formData, setFormData] = useState({
         name: '',
         overview: '',
         long_description: '',
         price: '',
-        rating: '',
+        rating: 5,
         poster: '',
         size: '',
         inStock: true,
         bestSeller: false
     });
     const [loading, setLoading] = useState(false);
-    const [error, setError] = useState('');
 
-    // Initialize form with product data if editing
     useEffect(() => {
         if (product) {
             setFormData({
@@ -24,250 +26,200 @@ const AdminProductForm = ({ product = null, onSuccess, onCancel }) => {
                 overview: product.overview || '',
                 long_description: product.long_description || product.longDescription || '',
                 price: product.price || '',
-                rating: product.rating || '',
+                rating: product.rating || 5,
                 poster: product.poster || '',
                 size: product.size || '',
                 inStock: product.in_stock !== undefined ? product.in_stock : (product.inStock !== undefined ? product.inStock : true),
                 bestSeller: product.best_seller !== undefined ? product.best_seller : (product.bestSeller !== undefined ? product.bestSeller : false)
             });
-        } else {
-            // Reset form when product is null (adding new product)
-            setFormData({
-                name: '',
-                overview: '',
-                long_description: '',
-                price: '',
-                rating: '',
-                poster: '',
-                size: '',
-                inStock: true,
-                bestSeller: false
-            });
         }
     }, [product]);
 
-    const handleInputChange = (e) => {
+    const handleChange = (e) => {
         const { name, value, type, checked } = e.target;
         setFormData(prev => ({
             ...prev,
-            [name]: type === 'checkbox' ? checked : value
+            [name]: type === "checkbox" ? checked : type === "number" ? Number(value) : value
         }));
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
-        setError('');
 
         try {
-            // Validate required fields
-            const required = ['name', 'overview', 'long_description', 'price', 'rating', 'poster', 'size'];
-            const missing = required.filter(field => !formData[field]);
-            
-            if (missing.length > 0) {
-                throw new Error(`Missing required fields: ${missing.join(', ')}`);
-            }
-
-            // Validate rating
-            const rating = parseFloat(formData.rating);
-            if (rating < 0 || rating > 5) {
-                throw new Error('Rating must be between 0 and 5');
+            if (!formData.name || !formData.price || !formData.poster || !formData.overview || !formData.long_description || !formData.size) {
+                toast.error("Please fill in all required fields");
+                setLoading(false);
+                return;
             }
 
             const dataToSubmit = {
                 ...formData,
                 price: parseFloat(formData.price),
-                rating: rating,
+                rating: parseFloat(formData.rating),
                 size: parseFloat(formData.size)
             };
 
             if (product) {
-                // Update existing product
                 await adminService.updateEbook(product.id, dataToSubmit);
+                toast.success('Product updated successfully');
             } else {
-                // Create new product
                 await adminService.createEbook(dataToSubmit);
+                toast.success('Product created successfully');
             }
 
             onSuccess();
         } catch (err) {
-            setError(err.message);
+            toast.error(err.message || "Failed to save product");
         } finally {
             setLoading(false);
         }
     };
 
     return (
-        <div className="max-w-2xl mx-auto p-6 bg-white rounded-lg shadow-lg">
-            <h2 className="text-2xl font-bold mb-6 text-gray-800">
-                {product ? 'Edit Product' : 'Add New Product'}
+        <form onSubmit={handleSubmit} className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
+            <h2 className="text-2xl font-bold dark:text-white mb-6">
+                {product ? "Edit Product" : "Add New Product"}
             </h2>
-            
-            {error && (
-                <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
-                    {error}
-                </div>
-            )}
 
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                    <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
+                    <label className="block text-gray-700 dark:text-gray-300 font-semibold mb-2">
                         Product Name *
                     </label>
                     <input
                         type="text"
-                        id="name"
                         name="name"
                         value={formData.name}
-                        onChange={handleInputChange}
+                        onChange={handleChange}
+                        className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-rose-500 dark:bg-gray-700 dark:text-white"
                         required
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-rose-500"
                     />
                 </div>
 
                 <div>
-                    <label htmlFor="overview" className="block text-sm font-medium text-gray-700 mb-1">
-                        Overview *
+                    <label className="block text-gray-700 dark:text-gray-300 font-semibold mb-2">
+                        Price ($) *
                     </label>
-                    <textarea
-                        id="overview"
-                        name="overview"
-                        value={formData.overview}
-                        onChange={handleInputChange}
+                    <input
+                        type="number"
+                        name="price"
+                        value={formData.price}
+                        onChange={handleChange}
+                        step="0.01"
+                        min="0"
+                        className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-rose-500 dark:bg-gray-700 dark:text-white"
                         required
-                        rows="3"
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-rose-500"
                     />
                 </div>
 
                 <div>
-                    <label htmlFor="long_description" className="block text-sm font-medium text-gray-700 mb-1">
-                        Long Description *
+                    <label className="block text-gray-700 dark:text-gray-300 font-semibold mb-2">
+                        Rating (1-5)
                     </label>
-                    <textarea
-                        id="long_description"
-                        name="long_description"
-                        value={formData.long_description}
-                        onChange={handleInputChange}
-                        required
-                        rows="5"
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-rose-500"
+                    <input
+                        type="number"
+                        name="rating"
+                        value={formData.rating}
+                        onChange={handleChange}
+                        min="1"
+                        max="5"
+                        step="0.1"
+                        className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-rose-500 dark:bg-gray-700 dark:text-white"
                     />
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                        <label htmlFor="price" className="block text-sm font-medium text-gray-700 mb-1">
-                            Price ($) *
-                        </label>
-                        <input
-                            type="number"
-                            id="price"
-                            name="price"
-                            value={formData.price}
-                            onChange={handleInputChange}
-                            required
-                            min="0"
-                            step="0.01"
-                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-rose-500"
-                        />
-                    </div>
-
-                    <div>
-                        <label htmlFor="rating" className="block text-sm font-medium text-gray-700 mb-1">
-                            Rating (0-5) *
-                        </label>
-                        <input
-                            type="number"
-                            id="rating"
-                            name="rating"
-                            value={formData.rating}
-                            onChange={handleInputChange}
-                            required
-                            min="0"
-                            max="5"
-                            step="0.1"
-                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-rose-500"
-                        />
-                    </div>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                        <label htmlFor="poster" className="block text-sm font-medium text-gray-700 mb-1">
-                            Poster URL *
-                        </label>
-                        <input
-                            type="url"
-                            id="poster"
-                            name="poster"
-                            value={formData.poster}
-                            onChange={handleInputChange}
-                            required
-                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-rose-500"
-                        />
-                    </div>
-
-                    <div>
-                        <label htmlFor="size" className="block text-sm font-medium text-gray-700 mb-1">
-                            Size (MB) *
-                        </label>
-                        <input
-                            type="number"
-                            id="size"
-                            name="size"
-                            value={formData.size}
-                            onChange={handleInputChange}
-                            required
-                            min="0"
-                            step="0.1"
-                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-rose-500"
-                        />
-                    </div>
-                </div>
-
-                <div className="flex items-center space-x-6">
-                    <label className="flex items-center">
-                        <input
-                            type="checkbox"
-                            name="inStock"
-                            checked={formData.inStock}
-                            onChange={handleInputChange}
-                            className="mr-2"
-                        />
-                        <span className="text-sm text-gray-700">In Stock</span>
+                <div>
+                    <label className="block text-gray-700 dark:text-gray-300 font-semibold mb-2">
+                        Size (MB) *
                     </label>
-
-                    <label className="flex items-center">
-                        <input
-                            type="checkbox"
-                            name="bestSeller"
-                            checked={formData.bestSeller}
-                            onChange={handleInputChange}
-                            className="mr-2"
-                        />
-                        <span className="text-sm text-gray-700">Best Seller</span>
-                    </label>
+                    <input
+                        type="number"
+                        name="size"
+                        value={formData.size}
+                        onChange={handleChange}
+                        min="0"
+                        step="0.1"
+                        className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-rose-500 dark:bg-gray-700 dark:text-white"
+                        required
+                    />
                 </div>
+            </div>
 
-                <div className="flex justify-end space-x-3 pt-4">
-                    <button
-                        type="button"
-                        onClick={onCancel}
-                        className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-rose-500"
-                    >
-                        Cancel
-                    </button>
-                    <button
-                        type="submit"
-                        disabled={loading}
-                        className="px-4 py-2 bg-rose-600 text-white rounded-md hover:bg-rose-600 focus:outline-none focus:ring-2 focus:ring-rose-500 disabled:opacity-50"
-                    >
-                        {loading ? 'Saving...' : (product ? 'Update Product' : 'Create Product')}
-                    </button>
-                </div>
-            </form>
-        </div>
+            <div className="mt-4">
+                <label className="block text-gray-700 dark:text-gray-300 font-semibold mb-2">
+                    Image URL *
+                </label>
+                <input
+                    type="url"
+                    name="poster"
+                    value={formData.poster}
+                    onChange={handleChange}
+                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-rose-500 dark:bg-gray-700 dark:text-white"
+                    required
+                />
+            </div>
+
+            <div className="mt-4">
+                <label className="block text-gray-700 dark:text-gray-300 font-semibold mb-2">
+                    Short Overview *
+                </label>
+                <textarea
+                    name="overview"
+                    value={formData.overview}
+                    onChange={handleChange}
+                    rows="2"
+                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-rose-500 dark:bg-gray-700 dark:text-white"
+                    required
+                />
+            </div>
+
+            <div className="mt-4">
+                <label className="block text-gray-700 dark:text-gray-300 font-semibold mb-2">
+                    Detailed Description *
+                </label>
+                <textarea
+                    name="long_description"
+                    value={formData.long_description}
+                    onChange={handleChange}
+                    rows="4"
+                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-rose-500 dark:bg-gray-700 dark:text-white"
+                    required
+                />
+            </div>
+
+            <div className="mt-4 flex gap-4">
+                <label className="flex items-center gap-2 text-gray-700 dark:text-gray-300">
+                    <input
+                        type="checkbox"
+                        name="inStock"
+                        checked={formData.inStock}
+                        onChange={handleChange}
+                        className="w-4 h-4"
+                    />
+                    In Stock
+                </label>
+                <label className="flex items-center gap-2 text-gray-700 dark:text-gray-300">
+                    <input
+                        type="checkbox"
+                        name="bestSeller"
+                        checked={formData.bestSeller}
+                        onChange={handleChange}
+                        className="w-4 h-4"
+                    />
+                    Best Seller
+                </label>
+            </div>
+
+            <button
+                type="submit"
+                disabled={loading}
+                className="mt-6 w-full bg-rose-600 text-white py-2 rounded-lg font-semibold hover:bg-rose-700 transition disabled:opacity-50"
+            >
+                {loading ? 'Saving...' : (product ? 'Update Product' : 'Add Product')}
+            </button>
+        </form>
     );
 };
 

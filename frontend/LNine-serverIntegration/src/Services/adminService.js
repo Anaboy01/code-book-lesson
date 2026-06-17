@@ -100,6 +100,23 @@ const updateEbook = async (id, ebookData) => {
 };
 
 /**
+ * Delete an ebook/product (Admin only)
+ * @param {string|number} id - Product ID
+ * @returns {Promise<Object>} Deletion response
+ */
+const deleteEbook = async (id) => {
+  try {
+    const response = await apiRequest(EBOOK_ENDPOINTS.DELETE(id), {
+      method: "DELETE",
+    });
+
+    return response;
+  } catch (error) {
+    throw new Error(error.message || "Failed to delete product");
+  }
+};
+
+/**
  * Check if current user is admin
  * @returns {Promise<boolean>} True if user is admin
  */
@@ -115,6 +132,7 @@ const checkAdminStatus = async () => {
 const adminService = {
   createEbook,
   updateEbook,
+  deleteEbook,
   checkAdminStatus,
 };
 
