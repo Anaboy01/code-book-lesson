@@ -1,5 +1,6 @@
 const frontendURL = process.env.CLIENT_URL;
 
+console.log(frontendURL)
 const allowedOrigin = [
     'http://localhost:5173',
     'http://localhost:5174',
